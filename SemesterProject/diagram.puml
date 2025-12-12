@@ -1,0 +1,128 @@
+@startuml
+
+' ==========================
+' ENUMERATIONS
+' ==========================
+enum FriendRequestStatus {
+    PENDING
+    ACCEPTED
+    REJECTED
+}
+
+' ==========================
+' INTERFACES
+' ==========================
+interface Likeable {
+    + like(User)
+    + unlike(User)
+}
+
+' ==========================
+' MAIN CLASSES
+' ==========================
+class User {
+    - String id
+    - String username
+    - String password
+    - Profile profile
+
+    - List<User> friends
+    - List<FriendRequest> incomingRequests
+    - List<FriendRequest> outgoingRequests
+    - List<Post> posts
+
+    + sendFriendRequest(User)
+    + acceptFriendRequest(FriendRequest)
+    + rejectFriendRequest(FriendRequest)
+    + removeFriend(User)
+    + createPost(String) : Post
+}
+
+class Profile {
+    - String fullName
+    - String bio
+    - String city
+    - String email
+
+    + updateBio(String)
+    + updateCity(String)
+}
+
+class FriendRequest {
+    - User from
+    - User to
+    - FriendRequestStatus status
+
+    + accept()
+    + reject()
+}
+
+class Post implements Likeable {
+    - String id
+    - User author
+    - String content
+    - LocalDateTime createdAt
+
+    - List<Like> likes
+    - List<Comment> comments
+
+    + addComment(Comment)
+    + like(User)
+    + unlike(User)
+}
+
+class Comment implements Likeable {
+    - String id
+    - User author
+    - String content
+    - LocalDateTime createdAt
+
+    - List<Like> likes
+
+    + like(User)
+    + unlike(User)
+}
+
+class Like {
+    - User user
+    - LocalDateTime createdAt
+}
+
+class AuthService {
+    + register(String username, String password, String fullName)
+    + login(String username, String password) : User
+}
+
+class DataStore {
+    - List<User> users
+    - List<Post> posts
+
+    + saveUser(User)
+    + findUserByUsername(String) : User
+    + savePost(Post)
+    + getAllPosts() : List<Post>
+}
+
+class MainApp {
+    + start()
+}
+
+' ==========================
+' RELATIONSHIPS
+' ==========================
+User "1" o-- "1" Profile
+User "1" o-- "*" Post
+User "1" o-- "*" User : friends
+
+User "1" o-- "*" FriendRequest : incoming >
+User "1" o-- "*" FriendRequest : outgoing >
+
+Post "1" o-- "*" Comment
+Post "1" o-- "*" Like
+
+Comment "1" o-- "*" Like
+
+DataStore "1" o-- "*" User
+DataStore "1" o-- "*" Post
+
+@enduml
