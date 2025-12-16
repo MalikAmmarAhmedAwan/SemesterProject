@@ -1,8 +1,10 @@
 package com.backend;
 
 import java.time.LocalDateTime;
+import java.io.Serializable;
 
-public class Like {
+public class Like implements Serializable {
+    private static final long serialVersionUID = 1L;
     private User user;
     private LocalDateTime createdAt;
 

@@ -1,34 +1,33 @@
 package com.backend;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
+import java.util.*;
 
 
-public class User {
+public class User implements Serializable {
+    private static final long serialVersionUID = 1L;
     protected String id;
     protected String username;
     protected String password;
     protected Profile profile;
+    protected String email;
 
     protected List<User> friends;
     protected List<FriendRequest> incomingRequests;
     protected List<FriendRequest> outgoingRequests;
     protected List<Post> posts;
 
+
     public User(String username, String password, String id, String fullName, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
-        this.profile = new Profile(fullName, email);
+        this.profile = new Profile();
 
         this.friends = new ArrayList<>();
         this.incomingRequests = new ArrayList<>();
         this.outgoingRequests = new ArrayList<>();
         this.posts = new ArrayList<>();
+        this.email = email;
     }
 
     public void sendFriendRequest(User targetUser) {
@@ -78,63 +77,6 @@ public class User {
         postToCommentOn.addComment(this, commentText);
     }
 
-    public void savePostsToFile() {
-        String fileName = this.username + "_posts.txt";
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
-
-            writer.write("User Feed: " + this.username);
-            writer.newLine();
-            writer.write("Total Posts: " + posts.size());
-            writer.newLine();
-            writer.write("========================================");
-            writer.newLine();
-
-            for (int i = 0; i < posts.size(); i++) {
-                Post p = posts.get(i);
-
-                writer.write("Post ID:  " + (i + 1));
-                writer.newLine();
-
-                if (p.date != null) {
-                    writer.write("Date:     " + p.date.format(formatter));
-                } else {
-                    writer.write("Date:     Unknown");
-                }
-                writer.newLine();
-
-                writer.write("Content:  " + p.getContent());
-                writer.newLine();
-
-                writer.write("Likes:    " + p.getLikes());
-                writer.newLine();
-
-                writer.write("Comments: " + p.getCommentCount());
-
-                ArrayList<Comments> postComments = p.getComments();
-                if(!postComments.isEmpty()) {
-                    writer.newLine();
-                    writer.write("   --- Comments ---");
-                    writer.newLine();
-                    for (int j = 0; j < postComments.size(); j++) {
-                        Comments c = postComments.get(j);
-                        writer.write("   " + (j + 1) + ". " + c.getAuthor() + ": " + c.getContent());
-                        writer.newLine();
-                    }
-                }
-
-                writer.write("----------------------------------------");
-                writer.newLine();
-            }
-
-            System.out.println("Data successfully saved to " + fileName);
-
-        } catch (IOException e) {
-            System.out.println("An error occurred while saving posts: " + e.getMessage());
-        }
-    }
 
     public List<FriendRequest> getIncomingRequests() {
         return incomingRequests;
@@ -148,6 +90,13 @@ public class User {
         return username;
     }
 
+    public Profile getProfile() {
+        return profile;
+    }
+
+    public String getEmail() {
+        return email;
+    }
 
     public String getPassword() {
         return password;
@@ -155,5 +104,13 @@ public class User {
 
     public List<Post> getPosts() {
         return posts;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

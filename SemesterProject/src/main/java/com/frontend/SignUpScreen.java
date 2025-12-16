@@ -1,6 +1,7 @@
 package com.frontend;
 
 import com.backend.AuthService;
+import com.backend.DataStored;
 import com.backend.User;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,7 +12,6 @@ import javafx.stage.Stage;
 public class SignUpScreen {
 
     public void start(Stage primaryStage) {
-        // UI Components
         Label titleLabel = new Label("Create Account");
         TextField fullNameField = new TextField();
         fullNameField.setPromptText("Full Name");
@@ -30,7 +30,6 @@ public class SignUpScreen {
 
         Label messageLabel = new Label();
 
-        // LOGIC: Handle Registration
         registerBtn.setOnAction(e -> {
             String name = fullNameField.getText();
             String email = emailField.getText();
@@ -44,10 +43,10 @@ public class SignUpScreen {
 
             AuthService auth = new AuthService();
             User newUser = auth.register(user, pass, name, email);
+            DataStored.getInstance().addUser(newUser);
 
             if (newUser != null) {
                 messageLabel.setText("Success! Please Go Back and Login.");
-                // Optional: Clear fields
                 fullNameField.clear();
                 emailField.clear();
                 userField.clear();
@@ -61,7 +60,6 @@ public class SignUpScreen {
             new LoginScreen().start(primaryStage);
         });
 
-        // Layout
         VBox layout = new VBox(10);
         layout.setAlignment(Pos.CENTER);
         layout.getChildren().addAll(titleLabel, fullNameField, emailField, userField, passField, registerBtn, backBtn, messageLabel);

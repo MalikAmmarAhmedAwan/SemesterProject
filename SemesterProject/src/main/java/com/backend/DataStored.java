@@ -1,19 +1,25 @@
 package com.backend;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 
 public class DataStored {
-    private List<User> users;
+    private static DataStored instance;
+    private ArrayList<User> users;
     private List<Post> posts;
+    private final String FILE_NAME = "social_network_data.dat";
 
     public DataStored() {
         this.users = new ArrayList<>();
         this.posts = new ArrayList<>();
+        loadData();
     }
 
-    public void saveUser(User user) {
-        this.users.add(user);
+    public static DataStored getInstance() {
+        if (instance == null) {
+            instance = new DataStored();
+        }
+        return instance;
     }
 
     public User findUserByUsername(String username) {
@@ -26,11 +32,47 @@ public class DataStored {
         return null;
     }
 
-    public void savePost(Post post) {
-        this.posts.add(post);
+    public void addUser(User u) {
+        users.add(u);
+        saveData();
     }
 
-    public List<Post> getAllPosts() {
-        return this.posts;
+    public void addPost(Post p) {
+        posts.add(p);
+        saveData();
+    }
+    public void saveData() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
+            oos.writeObject(users);
+            oos.writeObject(posts);
+            System.out.println("Data saved successfully.");
+        } catch (IOException e) {
+            System.err.println("Error saving data: " + e.getMessage());
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void loadData() {
+        File file = new File(FILE_NAME);
+        if (!file.exists()) {
+            System.out.println("No save file found. Starting fresh.");
+            return;
+        }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+            users = (ArrayList<User>) ois.readObject();
+            posts = (List<Post>) ois.readObject();
+            System.out.println("Data loaded successfully. Users: " + users.size() + ", Posts: " + posts.size());
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println("Error loading data: " + e.getMessage());
+        }
+    }
+
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public List<Post> getPosts() {
+        return posts;
     }
 }

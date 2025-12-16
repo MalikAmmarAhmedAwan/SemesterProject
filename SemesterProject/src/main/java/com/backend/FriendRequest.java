@@ -1,6 +1,9 @@
 package com.backend;
 
-public class FriendRequest {
+import java.io.Serializable;
+
+public class FriendRequest implements Serializable {
+    private static final long serialVersionUID = 1L;
     private User from;
     private User to;
     private FriendRequestStatus status;

@@ -1,33 +1,40 @@
 package com.backend;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.UUID;
-public class AuthService {
+
+public class AuthService implements Serializable {
+    private static final long serialVersionUID = 1L;
     private static ArrayList<User> registeredUsers = new ArrayList<>();
 
 
     public User register(String username, String password, String fullName, String email) {
-        for (int i = 0; i < registeredUsers.size(); i++) {
-            User u = registeredUsers.get(i);
+        System.out.println("--- Starting Registration for: " + username + " ---");
 
-            if (u.getUsername().equals(username)) {
+        for (User u : registeredUsers) {
+            System.out.println("Comparing against stored user: [" + u.getUsername() + "]");
+
+            if (u.getUsername().equalsIgnoreCase(username)) {
                 System.out.println("Error: Username '" + username + "' is already taken.");
                 return null;
             }
         }
         String autoId = UUID.randomUUID().toString();
-
         User newUser = new User(username, password, autoId, fullName, email);
         registeredUsers.add(newUser);
-        System.out.println("Registration successful for: " + username);
+
+        System.out.println("Registration successful. Total users: " + registeredUsers.size());
         return newUser;
     }
 
-    public User login(String username, String password) {
-        for (int i = 0; i < registeredUsers.size(); i++) {
-            User u = registeredUsers.get(i);
+    public static ArrayList<User> getRegisteredUsers() {
+        return registeredUsers;
+    }
 
-            if (u.getUsername().equals(username)) {
+    public User login(String username, String password) {
+        for (User u : registeredUsers) {
+            if (u.getUsername().equalsIgnoreCase(username)) {
                 if (u.getPassword().equals(password)) {
                     System.out.println("Login successful! Welcome, " + u.getUsername());
                     return u;
@@ -39,5 +46,9 @@ public class AuthService {
         }
         System.out.println("Error: User not found.");
         return null;
+    }
+
+    public static void setRegisteredUsers(ArrayList<User> users) {
+        registeredUsers = users;
     }
 }

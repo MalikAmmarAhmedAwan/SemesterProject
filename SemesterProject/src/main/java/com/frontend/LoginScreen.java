@@ -35,13 +35,14 @@ public class LoginScreen {
         Label messageLabel = new Label();
 
         loginButton.setOnAction(event -> {
-            String username = userField.getText();
-            String password = passField.getText();
+            String username = userField.getText().trim();
+            String password = passField.getText().trim();
 
             User user = authService.login(username, password);
 
             if (user != null) {
-                new NewsFeed(user).start(stage);
+                new NewsFeed(user, AuthService.getRegisteredUsers()).start(stage);
+
             } else {
                 messageLabel.setText("Incorrect password or user not found.");
                 messageLabel.setStyle("-fx-text-fill: red;");
@@ -54,7 +55,7 @@ public class LoginScreen {
 
         VBox layout = new VBox(15);
         layout.setAlignment(Pos.CENTER);
-        layout.getChildren().addAll(title, userField, passField, loginButton, messageLabel);
+        layout.getChildren().addAll(title, userField, passField, loginButton, signUpBtn, messageLabel);
 
         Scene scene = new Scene(layout, 400, 500);
         stage.setTitle("Login - Facebook");

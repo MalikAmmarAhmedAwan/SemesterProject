@@ -2,24 +2,27 @@ package com.backend;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Post implements Likable {
+public class Post implements Likable, Serializable {
+    private static final long serialVersionUID = 1L;
     String author;
     String content;
     LocalDateTime date;
     private ArrayList<Like> likes;
     private ArrayList<Comments> comments;
 
-    public Post(String author, String content, String date) {
-        this.author = author;
+
+    public Post(User user, String content) {
+        this.author = user.getUsername();
         this.content = content;
-        this.date = LocalDateTime.parse(date);
+        this.date = LocalDateTime.now();
         this.likes = new ArrayList<>();
         this.comments = new ArrayList<>();
     }
 
-    public Post(User user, String content) {
-        this.author = user.getUsername();
+    public Post(String username, String content) {
+        this.author = username;
         this.content = content;
         this.date = LocalDateTime.now();
         this.likes = new ArrayList<>();
@@ -54,9 +57,20 @@ public class Post implements Likable {
         this.comments.add(newComment);
     }
 
-    public int getCommentCount() {
-        return comments.size();
+    public boolean hasLiked(User user) {
+        for (Like l : this.likes) {
+            if (l.getUser().equals(user)) {
+                return true;
+            }
+        }
+        return false;
     }
+
+    public int getCommentCount() {
+        if (this.comments == null) {
+            return 0;
+        }
+        return this.comments.size();    }
     public ArrayList<Comments> getComments() {
         return comments;
     }
@@ -66,7 +80,11 @@ public class Post implements Likable {
     }
 
     public int getLikes() {
-        return likes.size();
+        if (this.likes == null) {
+            this.likes = new ArrayList<>();
+            return 0;
+        }
+        return this.likes.size();
     }
 
     public String getAuthor() {

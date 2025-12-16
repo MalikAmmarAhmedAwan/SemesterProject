@@ -4,8 +4,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.io.Serializable;
 
-public class Comments implements Likable {
+public class Comments implements Likable, Serializable {
+    private static final long serialVersionUID = 1L;
     private String id;
     private User author;
     private String content;
@@ -22,7 +24,6 @@ public class Comments implements Likable {
 
     @Override
     public void like(User user) {
-        // 1. Check if user already liked this comment
         for (int i = 0; i < this.likes.size(); i++) {
             Like currentLike = this.likes.get(i);
             if (currentLike.getUser().equals(user)) {

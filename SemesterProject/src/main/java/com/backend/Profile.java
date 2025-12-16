@@ -1,54 +1,24 @@
 package com.backend;
 
-public class Profile {
-    private String fullName;
-    private String bio;
+import java.io.Serializable;
+
+public class Profile implements Serializable {
+    private static final long serialVersionUID = 1L;
+
     private String city;
-    private String email;
+    private String bio;
+    private int numberOfPosts;
 
-    public Profile(String fullName, String email) {
-        this.fullName = fullName;
-        this.email = email;
-        this.bio = "";
-        this.city = "";
+    public Profile() {
+        this.city = "Unknown City";
+        this.bio = "No bio yet.";
+        this.numberOfPosts = 0;
     }
 
-    public Profile(String fullName, String email, String bio, String city) {
-        this.fullName = fullName;
-        this.email = email;
-        this.bio = bio;
-        this.city = city;
-    }
+    public String getCity() { return city; }
+    public String getBio() { return bio; }
+    public int getNumberOfPosts() { return numberOfPosts; }
 
-    public void setBio(String bio) {
-        this.bio = bio;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public String getBio() {
-        return bio;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
+    public void setCity(String city) { this.city = city; }
+    public void setBio(String bio) { this.bio = bio; }
 }
